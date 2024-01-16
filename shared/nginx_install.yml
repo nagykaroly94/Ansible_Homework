@@ -1,0 +1,26 @@
+---
+- name: Nginx telepítés és újraindítás index.html megváltoztatásával
+  hosts: all
+  become: yes
+  tasks:
+    - name: Telepítse az nginx csomagot
+      ansible.builtin.package:
+        name: nginx
+        state: present
+
+    - name: Nginx újraindítása
+      ansible.builtin.service:
+        name: nginx
+        enabled: yes
+      
+    - name: Az index.html fájl átírása
+      template:
+        src: index.html
+        dest: /usr/share/nginx/html/index.html
+      notify: Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
